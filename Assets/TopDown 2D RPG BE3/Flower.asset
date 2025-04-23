@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
-  m_Name: FlowerB
+  m_Name: Flower
   m_EditorClassIdentifier: 
   m_DefaultSprite: {fileID: -2969016694365801900, guid: 20d6cce5c7ac33b4e97f0f98a09aa347, type: 3}
-  m_DefaultGameObject: {fileID: 6967895820633000739, guid: c9dd6d1bb29a65a4d94aafef789f5846, type: 3}
+  m_DefaultGameObject: {fileID: 0}
   m_DefaultColliderType: 1
   m_TilingRules:
   - m_Id: 1
@@ -22,7 +22,7 @@ MonoBehaviour:
     - {fileID: 1955328530927145255, guid: 20d6cce5c7ac33b4e97f0f98a09aa347, type: 3}
     m_GameObject: {fileID: 0}
     m_MinAnimationSpeed: 1
-    m_MaxAnimationSpeed: 3
+    m_MaxAnimationSpeed: 4
     m_PerlinScale: 0.5
     m_Output: 2
     m_ColliderType: 1
