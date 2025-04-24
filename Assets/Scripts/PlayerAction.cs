@@ -10,6 +10,7 @@ public class PlayerAction : MonoBehaviour
     float h;    //좌우 방향값
     float v;    //상하 방향값
     bool isHorizonMove;
+    Vector3 dirVec;
 
     void Awake()
     {
@@ -65,11 +66,28 @@ public class PlayerAction : MonoBehaviour
         {
             anim.SetBool("isChange",false);
         }
+
+        //Direction
+        if(vDown && v == 1)
+        {
+            dirVec = Vector3.up;
+        }
+        else if(vDown && v == -1)
+        {
+            dirVec = Vector3.down;
+        }
+        else if(hDown && h == -1)
+        {
+            dirVec = Vector3.left;
+        }
+        else if(hDown && h == 1)
+        {
+            dirVec = Vector3.right;
+        }
     }
 
     void FixedUpdate()
     {
-        // Vector2 moveVec = isHorizonMove ? new Vector2(h,0) : new Vector2(0,v);
         //Move
         Vector2 moveVec;
         if (isHorizonMove == true)
@@ -81,5 +99,8 @@ public class PlayerAction : MonoBehaviour
             moveVec = new Vector2(0,v);
         }
         rigid.linearVelocity = moveVec * Speed;
+
+        //Ray
+        Debug.DrawRay(rigid.position, dirVec * 0.7f, new Color(0,1,0));
     }
 }
