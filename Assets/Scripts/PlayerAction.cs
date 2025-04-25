@@ -4,13 +4,15 @@ using System.Collections.Generic;
 
 public class PlayerAction : MonoBehaviour
 {
-    public float Speed = 4;
+    public float Speed = 6;
+    public GameManager manager; //플레이어에서 매니저 함수를 호출할 수 있게 변수 생성
     Rigidbody2D rigid;
     Animator anim;
     float h;    //좌우 방향값
     float v;    //상하 방향값
     bool isHorizonMove;
     Vector3 dirVec;
+    GameObject scanObject;
 
     void Awake()
     {
@@ -21,14 +23,16 @@ public class PlayerAction : MonoBehaviour
     void Update()
     {
         //Move Value
-        h = Input.GetAxisRaw("Horizontal");
-        v = Input.GetAxisRaw("Vertical");
+        // manager.isAction이 true면 0, false면 위아래 입력값
+        h = manager.isAction ? 0 : Input.GetAxisRaw("Horizontal"); 
+        v = manager.isAction ? 0 : Input.GetAxisRaw("Vertical");
 
         //Check Button Down & Up
-        bool hDown = Input.GetButtonDown("Horizontal");
-        bool vDown = Input.GetButtonDown("Vertical");
-        bool hUp = Input.GetButtonUp("Horizontal");
-        bool vUp = Input.GetButtonUp("Vertical");
+        //manager.isAction이 true면 false 대입, false면 해당값 대입
+        bool hDown = manager.isAction ? false : Input.GetButtonDown("Horizontal");
+        bool vDown = manager.isAction ? false : Input.GetButtonDown("Vertical");
+        bool hUp = manager.isAction ? false : Input.GetButtonUp("Horizontal");
+        bool vUp = manager.isAction ? false : Input.GetButtonUp("Vertical");
 
         //Check Horizontal Move
         if(hDown)
@@ -68,21 +72,27 @@ public class PlayerAction : MonoBehaviour
         }
 
         //Direction
-        if(vDown && v == 1)
+        if(vDown && v == 1)         //상
         {
             dirVec = Vector3.up;
         }
-        else if(vDown && v == -1)
+        else if(vDown && v == -1)   //하
         {
             dirVec = Vector3.down;
         }
-        else if(hDown && h == -1)
+        else if(hDown && h == -1)   //좌
         {
             dirVec = Vector3.left;
         }
-        else if(hDown && h == 1)
+        else if(hDown && h == 1)    //우
         {
             dirVec = Vector3.right;
+        }
+
+        //Scan Object & Action
+        if(Input.GetButtonDown("Jump") && scanObject != null)
+        {
+            manager.Action(scanObject);
         }
     }
 
@@ -102,5 +112,15 @@ public class PlayerAction : MonoBehaviour
 
         //Ray
         Debug.DrawRay(rigid.position, dirVec * 0.7f, new Color(0,1,0));
+        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, dirVec, 0.7f, LayerMask.GetMask("Object"));
+
+        if(rayHit.collider != null)
+        {
+            scanObject = rayHit.collider.gameObject;
+        }
+        else
+        {
+            scanObject = null;
+        }
     }
 }
