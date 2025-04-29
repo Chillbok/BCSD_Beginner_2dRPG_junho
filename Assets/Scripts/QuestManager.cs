@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 
 public class QuestManager : MonoBehaviour
@@ -72,7 +71,7 @@ public class QuestManager : MonoBehaviour
         questActionIndex = 0; //새로운 퀘스트가 시작되었으므로, 0으로 초기화
     }
 
-    void ControllObject()
+    public void ControllObject()
     {
         switch(questId)
         {
@@ -84,7 +83,10 @@ public class QuestManager : MonoBehaviour
                 break;
             //동전 먹으면 동전 끄기
             case 20:
-                if(questActionIndex == 1)
+                //불러오기 했을 당시의 퀘스트 순서와 연결된 오브젝트 관리 추가
+                if(questActionIndex == 0)
+                    questObject[0].SetActive(true);
+                else if(questActionIndex == 1)
                     questObject[0].SetActive(false);
                 break;
         }
