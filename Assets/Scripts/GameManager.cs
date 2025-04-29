@@ -7,9 +7,11 @@ public class GameManager : MonoBehaviour
 {
     public TalkManager talkManager; //대화 매니저를 변수로 선언
     public QuestManager questManager; //퀘스트 매니저를 변수로 생성
-    public GameObject talkPanel;
+    public Animator talkPanel; //대화창 생성/삭제 애니메이션을 위한 변수
+    public Animator portraitAnim; //초상화 애니메이션 담기 위한 변수
     public Image portraitImg; //Image UI 접근을 위한 변수
-    public Text talkText;
+    public Sprite prevPortrait; //과거 스프라이트를 저장해두어 비교하기 위한 변수
+    public TypeEffect talk;
     public GameObject scanObject;
     public bool isAction; // 확인하는 액션 했는가? true: 했음, false: 안했음
     public int talkIndex;
@@ -20,21 +22,33 @@ public class GameManager : MonoBehaviour
     }
     public void Action(GameObject scanObj)
     {
+        //Get Current Object
         scanObject = scanObj;
         ObjectData objectData = scanObject.GetComponent<ObjectData>();
         Talk(objectData.id, objectData.isNpc);
         
-        talkPanel.SetActive(isAction);  //대화창 나타내기 or 끄기, true면 켜고, false면 끔
+        //Visible Talk for Action
+        talkPanel.SetBool("isShow", isAction);
     }
 
     void Talk(int id, bool isNpc)
     {
         //Set Talk Data
-        int questTalkIndex = questManager.GetQuestTalkIndex(id);
-        string talkData = talkManager.GetTalk(
-            /*퀘스트 번호 + NPC id = 퀘스트 대화 데이터 id*/id+ questTalkIndex,
-            talkIndex
-            );
+        int questTalkIndex = 0;
+        string talkData = "";
+        if (talk.isAnim)
+        {
+            talk.SetMsg("");
+            return;
+        }
+        else
+        {
+            questTalkIndex = questManager.GetQuestTalkIndex(id);
+            talkData = talkManager.GetTalk(
+                /*퀘스트 번호 + NPC id = 퀘스트 대화 데이터 id*/id+ questTalkIndex,
+                talkIndex
+                );
+        }
 
         //End Talk
         if(talkData == null) //talkdata가 비어있으면 대화가 끝났구나
@@ -48,18 +62,27 @@ public class GameManager : MonoBehaviour
         //Continue Talk
         if(isNpc)
         {
-            talkText.text = talkData.Split(':')[0]; //구분자를 통해 배열로 나눠주는 문자열 함수.
-            portraitImg.sprite = talkManager.GetPortrait(id, int.Parse(talkData.Split(':')[1])); //Parse(): 문자열을 해당 타입으로 변환해주는 함수.
+            talk.SetMsg(talkData.Split(':')[0]); //구분자를 통해 배열로 나눠주는 문자열 함수.
 
             //Show Portrait
+            portraitImg.sprite = talkManager.GetPortrait(id, int.Parse(talkData.Split(':')[1])); //Parse(): 문자열을 해당 타입으로 변환해주는 함수.
             portraitImg.color = new Color(1,1,1,1); //NPC일 때에만 이미지가 보이도록 하기 위함. 맨 뒤 값은 1.(투명도 조절)
+            //Animation Portrait
+            if(prevPortrait != portraitImg.sprite)
+            {
+                portraitAnim.SetTrigger("doEffect");
+                prevPortrait = portraitImg.sprite;
+            }
         }
         else
         {
-            talkText.text = talkData;
+            talk.SetMsg(talkData);
+
+            //Hide Portrait
             portraitImg.color = new Color(1,1,1,0); //Portrait 가리기
         }
 
+        //Next Talk
         isAction = true;
         talkIndex++; //다음 대사 출력용. Action()이 작동할 때마다 talkIndex가 1씩 늘어남.
     }
