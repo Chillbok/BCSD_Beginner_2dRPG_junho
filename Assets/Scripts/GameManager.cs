@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;   // UI 프로그래밍 전에 반드시 넣어야 함
 
@@ -13,6 +15,7 @@ public class GameManager : MonoBehaviour
     public Sprite prevPortrait; //과거 스프라이트를 저장해두어 비교하기 위한 변수
     public TypeEffect talk;
     public Text questText; //퀘스트 텍스트 UI를 변수로 할당
+    public Text nameText; //오브젝트 이름 변수
     public GameObject menuSet;
     public GameObject scanObject;
     public GameObject player; //플레이어 데이터 저장용
@@ -47,17 +50,20 @@ public class GameManager : MonoBehaviour
         //Get Current Object
         scanObject = scanObj;
         ObjectData objectData = scanObject.GetComponent<ObjectData>();
-        Talk(objectData.id, objectData.isNpc);
+        Talk(objectData.id, objectData.isNpc, objectData.objectName);
         
         //Visible Talk for Action
         talkPanel.SetBool("isShow", isAction);
     }
 
-    void Talk(int id, bool isNpc)
+    void Talk(int id, bool isNpc, string objectName)
     {
         //Set Talk Data
         int questTalkIndex = 0;
         string talkData = "";
+        nameText.text = objectName;
+
+        //대화 데이터 불러오기
         if (talk.isAnim)
         {
             talk.SetMsg("");
@@ -109,21 +115,22 @@ public class GameManager : MonoBehaviour
         talkIndex++; //다음 대사 출력용. Action()이 작동할 때마다 talkIndex가 1씩 늘어남.
     }
 
-    public void GameSave()
+    public void GameSave() //게임 저장 함수
     {
         //PlayerPrefs: 간단한 데이터 저장 기능을 지원하는 클래스
         PlayerPrefs.SetFloat("PlayerX", player.transform.position.x);
         PlayerPrefs.SetFloat("PlayerY", player.transform.position.y);
-        PlayerPrefs.SetFloat("QuestId", questManager.questId);
-        PlayerPrefs.SetFloat("QuestActionIndex", questManager.questActionIndex);
+        PlayerPrefs.SetInt("QustId", questManager.questId);
+        PlayerPrefs.SetInt("QustActionIndex", questManager.questActionIndex);
         PlayerPrefs.Save();
         
+        //저장 후 메뉴 닫기
         menuSet.SetActive(false);
     }
 
-    public void GameLoad()
+    public void GameLoad() //게임 로드 함수
     {
-        if(!PlayerPrefs.HasKey("PlayerX")) //최초 게임 실행했을 땐 데이터가 없으므로 예외처리 로직 작성
+        if(!PlayerPrefs.HasKey("PlayerX")) //레지스트리가 없다면, 즉, 첫 시작이라면
         {
             return;
         }
@@ -131,8 +138,8 @@ public class GameManager : MonoBehaviour
         //레지스트리로부터 데이터 불러오기
         float x = PlayerPrefs.GetFloat("PlayerX");
         float y = PlayerPrefs.GetFloat("PlayerY");
-        int questId = PlayerPrefs.GetInt("QuestId");
-        int questActionIndex = PlayerPrefs.GetInt("QuestActionIndex");
+        int questId = PlayerPrefs.GetInt("QustId");
+        int questActionIndex = PlayerPrefs.GetInt("QustActionIndex");
 
         //불러온 데이터를 게임 오브젝트에 적용
         player.transform.position = new Vector3(x,y,0);

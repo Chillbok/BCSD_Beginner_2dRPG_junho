@@ -77,16 +77,13 @@ public class QuestManager : MonoBehaviour
         {
             //퀘스트 번호, 퀘스트 대화순서에 따라 오브젝트 조절
             case 10:
-                //Ludo와 대화 끝나면 동전 보이게 하기
-                if(questActionIndex == 2)
+                if(questActionIndex == 2) //루도와 대화가 끝나고 난 뒤
                     questObject[0].SetActive(true);
                 break;
-            //동전 먹으면 동전 끄기
             case 20:
-                //불러오기 했을 당시의 퀘스트 순서와 연결된 오브젝트 관리 추가
-                if(questActionIndex == 0)
+                if(questActionIndex == 0) //루도와 대화가 끝나고 난 뒤
                     questObject[0].SetActive(true);
-                else if(questActionIndex == 1)
+                else if(questActionIndex == 1) //동전을 얻었을 때
                     questObject[0].SetActive(false);
                 break;
         }
