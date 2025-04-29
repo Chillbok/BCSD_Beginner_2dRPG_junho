@@ -34,14 +34,19 @@ public class GameManager : MonoBehaviour
         //캔슬 버튼 누르면 UI 보이기
         if(Input.GetButtonDown("Cancel"))
         {
-            if(menuSet.activeSelf)
-            {
-                menuSet.SetActive(false);
-            }
-            else
-            {
-                menuSet.SetActive(true);
-            }
+            SubMenuActive();
+        }
+    }
+
+    public void SubMenuActive()
+    {
+        if(menuSet.activeSelf)
+        {
+            menuSet.SetActive(false);
+        }
+        else
+        {
+            menuSet.SetActive(true);
         }
     }
 
