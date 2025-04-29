@@ -58,6 +58,13 @@ public class QuestManager : MonoBehaviour
         return questList[questId].questName; //퀘스트 이름을 반환하도록 함수 개조.
     }
 
+    //오버로딩: 매개변수에 따라 같은 이름이어도 서로 다른 함수 호출 가능.
+    public string CheckQuest()//퀘스트 이름 반환하는 함수
+    {
+        //Quest Name
+        return questList[questId].questName; //퀘스트 이름을 반환하도록 함수 개조.
+    }
+
     //다음 퀘스트를 위한 함수 생성
     void NextQuest()
     {
